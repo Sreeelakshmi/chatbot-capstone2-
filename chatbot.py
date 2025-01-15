@@ -44,9 +44,18 @@ if "chat_engine" not in st.session_state:
 if prompt := st.chat_input("Ask me anything about your travel plans!"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("assistant"):
-        response = st.session_state.chat_engine.chat(prompt)
-        st.write(response.response)
-        st.session_state.messages.append({"role": "assistant", "content": response.response})
+        try:
+            response = st.session_state.chat_engine.chat(prompt)
+            # Debugging response object
+            st.write("Debugging response object:", response)  # Temporary debugging line
+            if hasattr(response, "response"):
+                reply = response.response
+            else:
+                reply = "Sorry, I could not process your request. Please try again."
+            st.write(reply)
+            st.session_state.messages.append({"role": "assistant", "content": reply})
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
 
 # Display chat history
 for message in st.session_state.messages:
